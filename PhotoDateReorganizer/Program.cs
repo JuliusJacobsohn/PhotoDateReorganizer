@@ -25,8 +25,8 @@ namespace PhotoDateReorganizer
             static void Main(string[] args)
             {
                 bool cut = false;
-                string input = @"F:\Unsorted";
-                string output = @"F:\Sorted";
+                string input = @"F:\Viktor Server Sortiert";
+                string output = @"F:\Fotos Sortiert neu";
                 Parser.Default.ParseArguments<Options>(args)
                    .WithParsed(o =>
                    {
@@ -47,26 +47,26 @@ namespace PhotoDateReorganizer
                     {
 
                         DateTime writeTime = File.GetLastWriteTime(file);
-                        writtenDate = Min(writtenDate, writeTime);
+                        writtenDate = Min(writtenDate, writeTime.Year > 1000 ? writeTime : writtenDate);
 
                         DateTime accessTime = File.GetLastAccessTime(file);
-                        writtenDate = Min(writtenDate, accessTime);
+                        writtenDate = Min(writtenDate, accessTime.Year > 1000 ? accessTime : writtenDate);
 
                         DateTime creationTime = File.GetCreationTime(file);
-                        writtenDate = Min(writtenDate, creationTime);
+                        writtenDate = Min(writtenDate, creationTime.Year > 1000 ? creationTime : writtenDate);
 
                         if (!forbiddenExtensions.Contains(Path.GetExtension(file)))
                         {
                             //Find minimum date in metadata etc.
                             var imageFile = ImageFile.FromFile(file);
                             DateTime dateTime = (DateTime)(imageFile.Properties.Get(ExifTag.DateTime)?.Value ?? maxDate);
-                            writtenDate = Min(writtenDate, dateTime);
+                            writtenDate = Min(writtenDate, dateTime.Year > 1000 ? dateTime : writtenDate);
 
                             DateTime dateTimeDigitized = (DateTime)(imageFile.Properties.Get(ExifTag.DateTimeDigitized)?.Value ?? maxDate);
-                            writtenDate = Min(writtenDate, dateTimeDigitized);
+                            writtenDate = Min(writtenDate, dateTimeDigitized.Year > 1000 ? dateTimeDigitized : writtenDate);
 
                             DateTime dateTimeOriginal = (DateTime)(imageFile.Properties.Get(ExifTag.DateTimeOriginal)?.Value ?? maxDate);
-                            writtenDate = Min(writtenDate, dateTimeOriginal);
+                            writtenDate = Min(writtenDate, dateTimeOriginal.Year > 1000 ? dateTimeOriginal : writtenDate);
                         }
 
                     }
